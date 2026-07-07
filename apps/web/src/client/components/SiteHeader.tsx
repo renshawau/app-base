@@ -46,7 +46,11 @@ export function SiteHeader() {
             provides one, styled wordmark until then. */}
         <a href="/" className="flex items-center">
           {tenant?.branding.logo ? (
-            <img src={tenant.branding.logo} alt={tenant.branding.name} className="h-10" />
+            <img
+              src={tenant.branding.logo}
+              alt={tenant.branding.name}
+              style={{ height: "var(--site-logo-height, 2.5rem)" }}
+            />
           ) : (
             <span
               className="text-lg font-bold tracking-[0.18em] uppercase"
