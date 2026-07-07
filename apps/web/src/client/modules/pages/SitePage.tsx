@@ -40,24 +40,45 @@ function Body({ html, className, style }: { html: string; className?: string; st
   return <div className={className} style={style} dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
+// The hero's rotating pieces (headline messages, background images) share one
+// clock: a single tick advances everything together, so the text and image
+// always transition at the same moment even when the lists differ in length.
+const HERO_ROTATION_MS = 6000;
+
+function useHeroTick(rotating: boolean) {
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    if (!rotating) return;
+    const timer = setInterval(() => setTick((t) => t + 1), HERO_ROTATION_MS);
+    return () => clearInterval(timer);
+  }, [rotating]);
+  return tick;
+}
+
 // Rotating hero headline (site brief: white text cycling through messages).
-// Driven by the hero section's `messages` frontmatter list; a single message
-// (or none) renders statically.
-function RotatingHeadline({ messages, fallback }: { messages: string[]; fallback: React.ReactNode }) {
-  const [index, setIndex] = useState(0);
+// Fades out, swaps to the tick's message, fades back in.
+function RotatingHeadline({
+  messages,
+  tick,
+  fallback,
+}: {
+  messages: string[];
+  tick: number;
+  fallback: React.ReactNode;
+}) {
+  const [displayed, setDisplayed] = useState(0);
   const [visible, setVisible] = useState(true);
+  const target = messages.length > 0 ? tick % messages.length : 0;
 
   useEffect(() => {
-    if (messages.length < 2) return;
-    const timer = setInterval(() => {
-      setVisible(false);
-      setTimeout(() => {
-        setIndex((i) => (i + 1) % messages.length);
-        setVisible(true);
-      }, 400);
-    }, 4500);
-    return () => clearInterval(timer);
-  }, [messages.length]);
+    if (target === displayed) return;
+    setVisible(false);
+    const timer = setTimeout(() => {
+      setDisplayed(target);
+      setVisible(true);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [target, displayed]);
 
   if (messages.length === 0) return <>{fallback}</>;
   return (
@@ -65,7 +86,7 @@ function RotatingHeadline({ messages, fallback }: { messages: string[]; fallback
       className="transition-opacity duration-400"
       style={{ opacity: visible ? 1 : 0 }}
     >
-      {messages[index]}
+      {messages[displayed]}
     </span>
   );
 }
@@ -73,14 +94,8 @@ function RotatingHeadline({ messages, fallback }: { messages: string[]; fallback
 // Full-bleed rotating hero background (hero frontmatter `background_images`).
 // Images crossfade behind the band's content; --site-hero-overlay tints them
 // for text legibility (e.g. a translucent brand green).
-function RotatingBackground({ images }: { images: string[] }) {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    if (images.length < 2) return;
-    const timer = setInterval(() => setIndex((i) => (i + 1) % images.length), 6000);
-    return () => clearInterval(timer);
-  }, [images.length]);
+function RotatingBackground({ images, tick }: { images: string[]; tick: number }) {
+  const index = tick % images.length;
 
   return (
     <div aria-hidden className="absolute inset-0">
@@ -124,16 +139,19 @@ export function SitePage() {
     };
   }, []);
 
-  if (!sections) return null;
-  const hero = sections["hero"];
-  const features = sections["features"];
-  const included = sections["included"];
-  const cta = sections["cta"];
-
+  // Hero derivations happen before the early return: useHeroTick is a hook,
+  // and hooks must run on every render.
+  const hero = sections?.["hero"];
   const heroMessages = hero ? ((hero.frontmatter.messages as string[] | undefined) ?? []) : [];
   const heroImage = hero ? str(hero.frontmatter, "image") : "";
   const heroBgImages = hero ? ((hero.frontmatter.background_images as string[] | undefined) ?? []) : [];
   const heroLeftAligned = Boolean(heroImage) || heroBgImages.length > 0;
+  const heroTick = useHeroTick(heroMessages.length > 1 || heroBgImages.length > 1);
+
+  if (!sections) return null;
+  const features = sections["features"];
+  const included = sections["included"];
+  const cta = sections["cta"];
 
   return (
     <div className="min-h-screen bg-kumo-canvas flex flex-col">
@@ -150,7 +168,7 @@ export function SitePage() {
             color: "var(--site-hero-fg, inherit)",
           }}
         >
-          {heroBgImages.length > 0 && <RotatingBackground images={heroBgImages} />}
+          {heroBgImages.length > 0 && <RotatingBackground images={heroBgImages} tick={heroTick} />}
           {/* Over a photographic background the copy sits left, clear of the
               subject; without one it stays centered. */}
           <div
@@ -169,6 +187,7 @@ export function SitePage() {
               <h1 className="text-4xl font-semibold tracking-tight mb-3 leading-tight min-h-[2.4em]">
                 <RotatingHeadline
                   messages={heroMessages}
+                  tick={heroTick}
                   fallback={
                     <>
                       {hero.title}
