@@ -15,10 +15,15 @@ declare module "hono" {
 const TTL_MS = 30_000;
 const cache = new Map<string, { tenant: Tenant; expiresAt: number }>();
 
+// Field-by-field so a tenant override replaces whole values, never deep-merges
+// them. Every brandingSchema field must appear here — a missing line silently
+// drops that field from every tenant.
 function mergeBranding(base: Branding, override?: Partial<Branding>): Branding {
   return {
     name: override?.name ?? base.name,
     nav: override?.nav ?? base.nav,
+    logo: override?.logo ?? base.logo,
+    footer: override?.footer ?? base.footer,
   };
 }
 
