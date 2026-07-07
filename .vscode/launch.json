@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Client-side debugging: launches Chrome against the dev server with
+      // source maps, so breakpoints in React/client code bind.
+      "name": "Client (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/apps/web",
+      "preLaunchTask": "dev server"
+    },
+    {
+      // Worker-side debugging: attaches to workerd's inspector, which the
+      // Cloudflare Vite plugin exposes on 9229 by default (it auto-shifts to
+      // the next free port if 9229 is taken — check the dev server output if
+      // the attach fails, e.g. when two dev servers run at once).
+      "name": "Worker (attach)",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "cwd": "${workspaceFolder}",
+      "resolveSourceMapLocations": null,
+      "attachExistingChildren": false
+    }
+  ],
+  "compounds": [
+    {
+      // The F5 default: start the dev server, then debug both halves.
+      "name": "Full stack (dev + client + worker)",
+      "configurations": ["Client (Chrome)", "Worker (attach)"],
+      "stopAll": true
+    }
+  ]
+}

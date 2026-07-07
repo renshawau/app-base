@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      // Background dev server for the debug launch configs. The problemMatcher's
+      // endsPattern tells VS Code when the server is ready so the debugger can attach.
+      "label": "dev server",
+      "type": "shell",
+      "command": "pnpm dev",
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": { "regexp": "^(ERROR)(.*)$", "severity": 1, "message": 2 },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".",
+          "endsPattern": "(Local|ready in)"
+        }
+      }
+    }
+  ]
+}

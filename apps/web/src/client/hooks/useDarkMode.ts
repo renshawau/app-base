@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import { defaultColorMode } from "../../modules";
 
 type Mode = "light" | "dark";
 
@@ -12,10 +13,12 @@ const listeners = new Set<() => void>();
 
 function initialMode(): Mode {
   if (typeof window === "undefined") return "light";
-  return (
-    (localStorage.getItem("theme") as Mode) ??
-    (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
-  );
+  const stored = localStorage.getItem("theme") as Mode | null;
+  if (stored) return stored;
+  // No stored choice: the site manifest decides — pinned mode, or follow
+  // the visitor's system preference.
+  if (defaultColorMode !== "system") return defaultColorMode;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
 let mode: Mode = initialMode();

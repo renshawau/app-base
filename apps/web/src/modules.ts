@@ -22,3 +22,10 @@ export const moduleMeta: Record<"blog" | "dashboard" | "portfolio" | "pages", Cl
 };
 
 export type ModuleName = keyof typeof moduleMeta;
+
+// The color mode new visitors get before they ever touch the toggle:
+// "system" follows prefers-color-scheme; "light"/"dark" pin the first visit.
+// Lives here (not site.config.ts) because the client needs it synchronously
+// at first paint, and this file is the dependency-free site-owned manifest.
+// A visitor's own toggle choice always wins once stored.
+export const defaultColorMode: "light" | "dark" | "system" = "system";
