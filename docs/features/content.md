@@ -65,6 +65,7 @@ Each content module's dashboard panel lists all entries with computed state (**d
 |---|---|---|
 | blog | posts | posts (list + `$slug` detail pages) |
 | pages | sections | marketing page sections (hero, features, included, cta) — structured fields incl. icon names in frontmatter, prose in the body |
+| pages | pages | standalone pages (about, contact, …) — one file per page, served at `<mount>/<slug>` |
 | portfolio | projects, profile | project cards; single profile entry (headline, skills, bio) |
 
 ## R2 source (planned — Plan 07 phase 2)

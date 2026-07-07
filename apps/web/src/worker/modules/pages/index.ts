@@ -3,7 +3,7 @@ import { z } from "zod";
 import type { ModuleMigration } from "@app-base/types";
 import type { AppBindings } from "../../bindings";
 import { moduleMeta } from "../../../modules";
-import { getPublishedEntries, toDto, type ContentCollection } from "../../content/engine";
+import { getPublishedEntries, getPublishedEntry, toDto, type ContentCollection } from "../../content/engine";
 import { createContentAdminRoutes } from "../../content/admin-routes";
 
 export const meta = moduleMeta.pages;
@@ -18,7 +18,14 @@ const sections: ContentCollection = {
   schema: z.object({ title: z.string() }).passthrough(),
 };
 
-export const collections: ContentCollection[] = [sections];
+// Standalone pages (about, contact, …) — one markdown file per page,
+// served client-side at <mount>/<slug>. Same engine, second collection.
+const pages: ContentCollection = {
+  name: "pages",
+  schema: z.object({ title: z.string() }).passthrough(),
+};
+
+export const collections: ContentCollection[] = [sections, pages];
 
 export const routes = new Hono<{ Bindings: AppBindings }>();
 
@@ -29,5 +36,12 @@ routes.get("/", (c) => {
   });
 });
 
+routes.get("/page/:slug", (c) => {
+  const entry = getPublishedEntry(meta.name, pages.name, c.req.param("slug"), c.get("tenant").id);
+  if (!entry) return c.notFound();
+  return c.json(toDto(entry));
+});
+
 export const adminRoutes = new Hono<{ Bindings: AppBindings }>();
 adminRoutes.route("/sections", createContentAdminRoutes(meta.name, sections));
+adminRoutes.route("/pages", createContentAdminRoutes(meta.name, pages));
