@@ -70,6 +70,37 @@ function RotatingHeadline({ messages, fallback }: { messages: string[]; fallback
   );
 }
 
+// Full-bleed rotating hero background (hero frontmatter `background_images`).
+// Images crossfade behind the band's content; --site-hero-overlay tints them
+// for text legibility (e.g. a translucent brand green).
+function RotatingBackground({ images }: { images: string[] }) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (images.length < 2) return;
+    const timer = setInterval(() => setIndex((i) => (i + 1) % images.length), 6000);
+    return () => clearInterval(timer);
+  }, [images.length]);
+
+  return (
+    <div aria-hidden className="absolute inset-0">
+      {images.map((src, i) => (
+        <img
+          key={src}
+          src={src}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+          style={{ opacity: i === index ? 1 : 0 }}
+        />
+      ))}
+      <div
+        className="absolute inset-0"
+        style={{ background: "var(--site-hero-overlay, transparent)" }}
+      />
+    </div>
+  );
+}
+
 export function SitePage() {
   const [sections, setSections] = useState<Record<string, Dto> | null>(null);
 
@@ -96,6 +127,7 @@ export function SitePage() {
 
   const heroMessages = hero ? ((hero.frontmatter.messages as string[] | undefined) ?? []) : [];
   const heroImage = hero ? str(hero.frontmatter, "image") : "";
+  const heroBgImages = hero ? ((hero.frontmatter.background_images as string[] | undefined) ?? []) : [];
 
   return (
     <div className="min-h-screen bg-kumo-canvas flex flex-col">
@@ -103,15 +135,18 @@ export function SitePage() {
 
       {hero && (
         // The hero band: full-width, site-themable (--site-hero-*), with an
-        // optional right-hand image and rotating headline (site brief item 4).
+        // optional right-hand image, rotating headline (site brief item 4),
+        // and optional full-bleed rotating background images.
         <section
+          className="relative overflow-hidden"
           style={{
             background: "var(--site-hero-bg, transparent)",
             color: "var(--site-hero-fg, inherit)",
           }}
         >
+          {heroBgImages.length > 0 && <RotatingBackground images={heroBgImages} />}
           <div
-            className={`max-w-5xl mx-auto w-full px-6 pt-16 pb-14 ${
+            className={`relative z-10 max-w-5xl mx-auto w-full px-6 pt-16 pb-14 ${
               heroImage
                 ? "grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-10 items-center text-left"
                 : "text-center"

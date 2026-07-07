@@ -4,7 +4,7 @@ type TenantInfo = {
   name: string;
   branding: {
     name: string;
-    nav: { label: string; href: string }[];
+    nav: { label: string; href: string; children?: { label: string; href: string }[] }[];
     logo?: string;
     footer?: { links: { label: string; href: string }[]; text?: string };
   };

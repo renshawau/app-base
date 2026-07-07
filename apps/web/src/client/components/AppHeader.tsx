@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@cloudflare/kumo";
 import { ArrowLeft, Moon, Sun } from "@phosphor-icons/react";
 import { useDarkMode } from "../hooks/useDarkMode";
+import { useTenant } from "../hooks/useTenant";
 
 interface AppHeaderProps {
   back?: boolean;
@@ -11,13 +12,16 @@ interface AppHeaderProps {
 
 export function AppHeader({ back, title, children }: AppHeaderProps) {
   const { mode, toggle } = useDarkMode();
+  const tenant = useTenant();
 
   return (
     <header className="h-12 border-b border-kumo-line bg-kumo-base flex items-center gap-2 px-4 shrink-0">
       {back && (
+        // Goes to the site root, so the label names the destination
+        // (the site, from branding) rather than a generic "Back".
         <Link to="/">
           <Button variant="ghost" size="sm" icon={<ArrowLeft size={14} />}>
-            Templates
+            {tenant?.branding.name ?? "Home"}
           </Button>
         </Link>
       )}

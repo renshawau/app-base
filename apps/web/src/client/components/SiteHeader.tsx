@@ -64,16 +64,47 @@ export function SiteHeader() {
         style={{ background: "var(--site-nav-bg, var(--color-kumo-base))" }}
       >
         <div className="max-w-5xl mx-auto w-full px-6 flex flex-col sm:flex-row sm:items-center sm:flex-wrap gap-x-6">
-          {nav.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="py-3 text-sm whitespace-nowrap hover:underline underline-offset-4"
-              style={{ color: "var(--site-nav-fg, var(--color-kumo-default))" }}
-            >
-              {item.label}
-            </a>
-          ))}
+          {nav.map((item) =>
+            item.children?.length ? (
+              // Dropdown entry: hover/focus opens on desktop; on the small-
+              // screen expanded menu the children render inline, indented.
+              <div key={item.href} className="relative group">
+                <a
+                  href={item.href}
+                  className="py-3 text-sm whitespace-nowrap hover:underline underline-offset-4 inline-flex items-center gap-1"
+                  style={{ color: "var(--site-nav-fg, var(--color-kumo-default))" }}
+                  aria-haspopup="true"
+                >
+                  {item.label}
+                  <span aria-hidden className="text-[10px] leading-none">▾</span>
+                </a>
+                <div
+                  className="sm:absolute sm:left-0 sm:top-full sm:min-w-56 sm:border sm:border-kumo-line sm:rounded-b-md sm:shadow-md sm:hidden sm:group-hover:block sm:group-focus-within:block pl-4 sm:pl-0 sm:z-20"
+                  style={{ background: "var(--site-nav-bg, var(--color-kumo-base))" }}
+                >
+                  {item.children.map((child) => (
+                    <a
+                      key={child.href}
+                      href={child.href}
+                      className="block py-2 sm:px-4 text-sm whitespace-nowrap hover:underline underline-offset-4"
+                      style={{ color: "var(--site-nav-fg, var(--color-kumo-default))" }}
+                    >
+                      {child.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <a
+                key={item.href}
+                href={item.href}
+                className="py-3 text-sm whitespace-nowrap hover:underline underline-offset-4"
+                style={{ color: "var(--site-nav-fg, var(--color-kumo-default))" }}
+              >
+                {item.label}
+              </a>
+            )
+          )}
         </div>
       </nav>
     </header>

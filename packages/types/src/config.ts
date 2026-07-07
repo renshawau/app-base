@@ -4,10 +4,17 @@ export const moduleConfigSchema = z.object({
   enabled: z.boolean(),
 });
 
+/** One nav entry; `children` makes it a dropdown in the public-site header. */
+export const navItemSchema = z.object({
+  label: z.string(),
+  href: z.string(),
+  children: z.array(z.object({ label: z.string(), href: z.string() })).optional(),
+});
+
 /** Site-wide branding. Sites override values here, never component code (see docs/plans/02-theming.md). */
 export const brandingSchema = z.object({
   name: z.string(),
-  nav: z.array(z.object({ label: z.string(), href: z.string() })).default([]),
+  nav: z.array(navItemSchema).default([]),
   /** logo image URL (a site asset); the styled name is the fallback wordmark */
   logo: z.string().optional(),
   /** public-site footer: links row plus an optional statement (e.g. Acknowledgement of Country) */
