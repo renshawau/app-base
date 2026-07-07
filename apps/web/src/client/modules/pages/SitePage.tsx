@@ -90,7 +90,12 @@ function RotatingBackground({ images }: { images: string[] }) {
           src={src}
           alt=""
           className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
-          style={{ opacity: i === index ? 1 : 0 }}
+          style={{
+            opacity: i === index ? 1 : 0,
+            // Focal point for responsive crops — sites tune it so the
+            // subject survives narrow viewports (e.g. "60% 30%").
+            objectPosition: "var(--site-hero-image-position, 50% 35%)",
+          }}
         />
       ))}
       <div
@@ -128,6 +133,7 @@ export function SitePage() {
   const heroMessages = hero ? ((hero.frontmatter.messages as string[] | undefined) ?? []) : [];
   const heroImage = hero ? str(hero.frontmatter, "image") : "";
   const heroBgImages = hero ? ((hero.frontmatter.background_images as string[] | undefined) ?? []) : [];
+  const heroLeftAligned = Boolean(heroImage) || heroBgImages.length > 0;
 
   return (
     <div className="min-h-screen bg-kumo-canvas flex flex-col">
@@ -145,11 +151,15 @@ export function SitePage() {
           }}
         >
           {heroBgImages.length > 0 && <RotatingBackground images={heroBgImages} />}
+          {/* Over a photographic background the copy sits left, clear of the
+              subject; without one it stays centered. */}
           <div
             className={`relative z-10 max-w-5xl mx-auto w-full px-6 pt-16 pb-14 ${
               heroImage
                 ? "grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-10 items-center text-left"
-                : "text-center"
+                : heroBgImages.length > 0
+                  ? "text-left"
+                  : "text-center"
             }`}
           >
             <div>
@@ -172,10 +182,10 @@ export function SitePage() {
               </h1>
               <Body
                 html={hero.body_html}
-                className={`text-sm mb-8 leading-relaxed max-w-md ${heroImage ? "" : "mx-auto"}`}
+                className={`text-sm mb-8 leading-relaxed max-w-md ${heroLeftAligned ? "" : "mx-auto"}`}
                 style={{ opacity: 0.85 }}
               />
-              <div className={`flex items-center gap-2 mb-4 ${heroImage ? "" : "justify-center"}`}>
+              <div className={`flex items-center gap-2 mb-4 ${heroLeftAligned ? "" : "justify-center"}`}>
                 <a
                   href={str(hero.frontmatter, "primary_cta_href") || "#"}
                   className="rounded-md px-4 py-2 text-sm font-medium"
