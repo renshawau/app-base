@@ -8,6 +8,15 @@ export const moduleConfigSchema = z.object({
 export const brandingSchema = z.object({
   name: z.string(),
   nav: z.array(z.object({ label: z.string(), href: z.string() })).default([]),
+  /** logo image URL (a site asset); the styled name is the fallback wordmark */
+  logo: z.string().optional(),
+  /** public-site footer: links row plus an optional statement (e.g. Acknowledgement of Country) */
+  footer: z
+    .object({
+      links: z.array(z.object({ label: z.string(), href: z.string() })).default([]),
+      text: z.string().optional(),
+    })
+    .optional(),
 });
 export type Branding = z.infer<typeof brandingSchema>;
 

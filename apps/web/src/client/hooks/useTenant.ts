@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 
 type TenantInfo = {
   name: string;
-  branding: { name: string; nav: { label: string; href: string }[] };
+  branding: {
+    name: string;
+    nav: { label: string; href: string }[];
+    logo?: string;
+    footer?: { links: { label: string; href: string }[]; text?: string };
+  };
   modules: Record<string, { enabled: boolean }>;
 };
 

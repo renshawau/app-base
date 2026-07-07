@@ -1,8 +1,8 @@
 import { Text } from "@cloudflare/kumo";
 import { useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { AppHeader } from "../../components/AppHeader";
-import { useTenant } from "../../hooks/useTenant";
+import { SiteFooter } from "../../components/SiteFooter";
+import { SiteHeader } from "../../components/SiteHeader";
 
 type Dto = {
   slug: string;
@@ -15,7 +15,6 @@ type Dto = {
 // rendered at <mount>/<slug>. Layout stays minimal: title + prose body.
 export function StaticPage() {
   const { slug } = useParams({ strict: false }) as { slug: string };
-  const tenant = useTenant();
   const [page, setPage] = useState<Dto | null | "missing">(null);
 
   useEffect(() => {
@@ -36,9 +35,9 @@ export function StaticPage() {
 
   return (
     <div className="min-h-screen bg-kumo-canvas flex flex-col">
-      <AppHeader back title={tenant?.branding.name ?? ""} />
+      <SiteHeader />
 
-      <main className="max-w-2xl mx-auto w-full px-6 py-10">
+      <main className="max-w-2xl mx-auto w-full px-6 py-10 flex-1">
         {page === "missing" && <Text variant="secondary">Page not found.</Text>}
         {page && page !== "missing" && (
           <article>
@@ -51,6 +50,8 @@ export function StaticPage() {
           </article>
         )}
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

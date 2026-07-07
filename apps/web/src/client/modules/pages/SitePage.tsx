@@ -11,8 +11,8 @@ import {
   type Icon,
 } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
-import { AppHeader } from "../../components/AppHeader";
-import { useTenant } from "../../hooks/useTenant";
+import { SiteFooter } from "../../components/SiteFooter";
+import { SiteHeader } from "../../components/SiteHeader";
 
 type Dto = {
   slug: string;
@@ -36,12 +36,41 @@ type FeatureItem = { icon?: string; label: string; description: string };
 const str = (fm: Record<string, unknown>, key: string): string =>
   typeof fm[key] === "string" ? (fm[key] as string) : "";
 
-function Body({ html, className }: { html: string; className?: string }) {
-  return <div className={className} dangerouslySetInnerHTML={{ __html: html }} />;
+function Body({ html, className, style }: { html: string; className?: string; style?: React.CSSProperties }) {
+  return <div className={className} style={style} dangerouslySetInnerHTML={{ __html: html }} />;
+}
+
+// Rotating hero headline (site brief: white text cycling through messages).
+// Driven by the hero section's `messages` frontmatter list; a single message
+// (or none) renders statically.
+function RotatingHeadline({ messages, fallback }: { messages: string[]; fallback: React.ReactNode }) {
+  const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    if (messages.length < 2) return;
+    const timer = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setIndex((i) => (i + 1) % messages.length);
+        setVisible(true);
+      }, 400);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [messages.length]);
+
+  if (messages.length === 0) return <>{fallback}</>;
+  return (
+    <span
+      className="transition-opacity duration-400"
+      style={{ opacity: visible ? 1 : 0 }}
+    >
+      {messages[index]}
+    </span>
+  );
 }
 
 export function SitePage() {
-  const tenant = useTenant();
   const [sections, setSections] = useState<Record<string, Dto> | null>(null);
 
   useEffect(() => {
@@ -65,35 +94,84 @@ export function SitePage() {
   const included = sections["included"];
   const cta = sections["cta"];
 
+  const heroMessages = hero ? ((hero.frontmatter.messages as string[] | undefined) ?? []) : [];
+  const heroImage = hero ? str(hero.frontmatter, "image") : "";
+
   return (
     <div className="min-h-screen bg-kumo-canvas flex flex-col">
-      <AppHeader back title={tenant?.branding.name ?? "Site"} />
+      <SiteHeader />
 
       {hero && (
-        <section className="max-w-4xl mx-auto w-full px-6 pt-16 pb-14 text-center">
-          {str(hero.frontmatter, "badge") && (
-            <Badge variant="info" className="mb-5 inline-flex">{str(hero.frontmatter, "badge")}</Badge>
-          )}
-          <h1 className="text-4xl font-semibold tracking-tight text-kumo-strong mb-3 leading-tight">
-            {hero.title}
-            <br />
-            <span className="text-kumo-brand">{str(hero.frontmatter, "accent")}</span>
-          </h1>
-          <Body
-            html={hero.body_html}
-            className="text-kumo-subtle text-sm max-w-md mx-auto mb-8 leading-relaxed"
-          />
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Button variant="primary" size="sm" icon={<ArrowRight size={13} />}>
-              {str(hero.frontmatter, "primary_cta") || "Get started"}
-            </Button>
-            {str(hero.frontmatter, "secondary_cta") && (
-              <Button variant="secondary" size="sm">{str(hero.frontmatter, "secondary_cta")}</Button>
+        // The hero band: full-width, site-themable (--site-hero-*), with an
+        // optional right-hand image and rotating headline (site brief item 4).
+        <section
+          style={{
+            background: "var(--site-hero-bg, transparent)",
+            color: "var(--site-hero-fg, inherit)",
+          }}
+        >
+          <div
+            className={`max-w-5xl mx-auto w-full px-6 pt-16 pb-14 ${
+              heroImage
+                ? "grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-10 items-center text-left"
+                : "text-center"
+            }`}
+          >
+            <div>
+              {str(hero.frontmatter, "badge") && (
+                <Badge variant="info" className="mb-5 inline-flex">{str(hero.frontmatter, "badge")}</Badge>
+              )}
+              <h1 className="text-4xl font-semibold tracking-tight mb-3 leading-tight min-h-[2.4em]">
+                <RotatingHeadline
+                  messages={heroMessages}
+                  fallback={
+                    <>
+                      {hero.title}
+                      <br />
+                      <span style={{ color: "var(--site-hero-accent, var(--color-kumo-brand))" }}>
+                        {str(hero.frontmatter, "accent")}
+                      </span>
+                    </>
+                  }
+                />
+              </h1>
+              <Body
+                html={hero.body_html}
+                className={`text-sm mb-8 leading-relaxed max-w-md ${heroImage ? "" : "mx-auto"}`}
+                style={{ opacity: 0.85 }}
+              />
+              <div className={`flex items-center gap-2 mb-4 ${heroImage ? "" : "justify-center"}`}>
+                <a
+                  href={str(hero.frontmatter, "primary_cta_href") || "#"}
+                  className="rounded-md px-4 py-2 text-sm font-medium"
+                  style={{
+                    background: "var(--site-hero-cta-bg, var(--color-kumo-brand))",
+                    color: "var(--site-hero-cta-fg, #fff)",
+                  }}
+                >
+                  {str(hero.frontmatter, "primary_cta") || "Get started"}
+                </a>
+                {str(hero.frontmatter, "secondary_cta") && (
+                  <a
+                    href={str(hero.frontmatter, "secondary_cta_href") || "#"}
+                    className="rounded-md px-4 py-2 text-sm font-medium border border-current"
+                  >
+                    {str(hero.frontmatter, "secondary_cta")}
+                  </a>
+                )}
+              </div>
+              {str(hero.frontmatter, "note") && (
+                <p className="text-xs" style={{ opacity: 0.7 }}>{str(hero.frontmatter, "note")}</p>
+              )}
+            </div>
+            {heroImage && (
+              <img
+                src={heroImage}
+                alt=""
+                className="w-full max-w-xs mx-auto md:mx-0 md:justify-self-end"
+              />
             )}
           </div>
-          {str(hero.frontmatter, "note") && (
-            <Text variant="secondary" size="xs">{str(hero.frontmatter, "note")}</Text>
-          )}
         </section>
       )}
 
@@ -171,6 +249,8 @@ export function SitePage() {
           </section>
         </>
       )}
+
+      <SiteFooter />
     </div>
   );
 }
