@@ -22,6 +22,8 @@ export const brandingSchema = z.object({
     .object({
       links: z.array(z.object({ label: z.string(), href: z.string() })).default([]),
       text: z.string().optional(),
+      /** logo image URL rendered beside the statement */
+      logo: z.string().optional(),
     })
     .optional(),
 });

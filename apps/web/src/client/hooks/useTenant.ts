@@ -6,7 +6,7 @@ type TenantInfo = {
     name: string;
     nav: { label: string; href: string; children?: { label: string; href: string }[] }[];
     logo?: string;
-    footer?: { links: { label: string; href: string }[]; text?: string };
+    footer?: { links: { label: string; href: string }[]; text?: string; logo?: string };
   };
   modules: Record<string, { enabled: boolean }>;
 };

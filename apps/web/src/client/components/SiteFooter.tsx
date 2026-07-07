@@ -34,13 +34,24 @@ export function SiteFooter() {
             </a>
           ))}
         </div>
-        {footer.text && (
-          <p
-            className="text-xs leading-relaxed max-w-3xl"
-            style={{ color: "var(--site-footer-fg, var(--color-kumo-subtle))" }}
-          >
-            {footer.text}
-          </p>
+        {(footer.text || footer.logo) && (
+          <div className="flex flex-wrap items-center gap-6">
+            {footer.logo && (
+              <img
+                src={footer.logo}
+                alt={tenant.branding.name}
+                style={{ height: "var(--site-footer-logo-height, 4rem)" }}
+              />
+            )}
+            {footer.text && (
+              <p
+                className="text-xs leading-relaxed max-w-3xl flex-1 min-w-64"
+                style={{ color: "var(--site-footer-fg, var(--color-kumo-subtle))" }}
+              >
+                {footer.text}
+              </p>
+            )}
+          </div>
         )}
       </div>
     </footer>
