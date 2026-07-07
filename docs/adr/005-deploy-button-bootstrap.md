@@ -1,7 +1,7 @@
 # ADR 005: Deploy to Cloudflare button as the deployment bootstrap
 
 **Date:** 2026-07-05
-**Status:** Accepted (one platform behavior pending verification — see below)
+**Status:** Accepted. The pending platform behavior was verified 2026-07-07: the provisioning step does **not** discover `apps/web/wrangler.jsonc` from a root-pointed URL ("No Wrangler configuration detected"), so the documented fallback is now the implementation — see "Verified outcome" below.
 
 ## Context
 
@@ -25,6 +25,14 @@ Adopt the [Deploy to Cloudflare button](https://developers.cloudflare.com/worker
 ## Pending verification (at first push)
 
 The docs don't specify whether the provisioning step discovers `apps/web/wrangler.jsonc` from a root-pointed URL. If it doesn't: fall back plan is moving the wrangler config to the repo root with root-relative paths and pointing the vite plugin at it via `cloudflare({ configPath })`. Verify with a test-account deploy immediately after the repo goes public, and update this ADR's status line with the outcome.
+
+## Verified outcome (2026-07-07)
+
+Tested at first push: the button reported "No Wrangler configuration detected. Cloudflare will attempt automatic project configuration." — so the fallback above is now the implementation:
+
+- `wrangler.jsonc` lives at the **repo root** with root-relative paths (`main: apps/web/src/worker/index.ts`, assets at `apps/web/dist/client`).
+- The Vite plugin is pointed at it via `cloudflare({ configPath: "../../wrangler.jsonc" })` in `apps/web/vite.config.mts`.
+- One wrinkle: the plugin always writes its deploy-config redirect at the Vite root (`apps/web/.wrangler/deploy/config.json`), but wrangler only honors a redirect sitting next to the user config. `scripts/prepare-deploy.mjs` translates the redirect to the repo root after each build; the root `deploy` script and the GitHub Action both run it before `wrangler deploy` (executed with `--cwd` at the root). Verified locally via `wrangler deploy --dry-run`: the generated config is picked up with all bindings intact.
 
 ## Consequences
 

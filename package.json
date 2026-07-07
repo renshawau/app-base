@@ -5,7 +5,7 @@
     "build": "pnpm -r build",
     "dev": "pnpm --filter web dev",
     "typecheck": "pnpm -r typecheck",
-    "deploy": "pnpm --filter web exec wrangler deploy"
+    "deploy": "node scripts/prepare-deploy.mjs && pnpm --filter web exec wrangler deploy --cwd ../.."
   },
   "devDependencies": {
     "typescript": "^5.8.3"

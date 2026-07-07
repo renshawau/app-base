@@ -31,7 +31,8 @@ jobs:
       # Deploy to Cloudflare button use Workers Builds for deploys instead,
       # and shouldn't double-deploy (or fail CI) here. Set the
       # CLOUDFLARE_API_TOKEN secret only if you deploy via this workflow.
+      # Runs from the repo root: wrangler.jsonc lives there (ADR 005), and
+      # prepare-deploy.mjs points wrangler at the Vite-generated config.
       - name: Deploy Worker
         if: env.CLOUDFLARE_API_TOKEN != ''
-        working-directory: apps/web
-        run: pnpm wrangler deploy
+        run: pnpm run deploy

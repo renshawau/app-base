@@ -2,7 +2,7 @@
 
 ## Topology
 
-One D1 database per install, bound as `DB` (`apps/web/wrangler.jsonc`). Multi-tenant deployments (`tenancy: "multi"`, see [settings](../guides/maintenance.md#tenant-management)) scope rows with a `tenant_id` column where it matters. We deliberately don't do D1-per-tenant — it doesn't scale with tenant count, and one database with scoped rows does.
+One D1 database per install, bound as `DB` (root `wrangler.jsonc`). Multi-tenant deployments (`tenancy: "multi"`, see [settings](../guides/maintenance.md#tenant-management)) scope rows with a `tenant_id` column where it matters. We deliberately don't do D1-per-tenant — it doesn't scale with tenant count, and one database with scoped rows does.
 
 ## Modules own their schema
 

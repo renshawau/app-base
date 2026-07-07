@@ -14,7 +14,7 @@ Two packages deserve extra care:
 
 ## Wrangler compatibility date
 
-Bump `compatibility_date` in `apps/web/wrangler.jsonc` when you want to adopt new platform features. Read the [Cloudflare changelog](https://developers.cloudflare.com/workers/configuration/compatibility-dates/) before bumping — the date controls runtime behavior, not just feature availability.
+Bump `compatibility_date` in `wrangler.jsonc` (repo root) when you want to adopt new platform features. Read the [Cloudflare changelog](https://developers.cloudflare.com/workers/configuration/compatibility-dates/) before bumping — the date controls runtime behavior, not just feature availability.
 
 ## Monitoring
 

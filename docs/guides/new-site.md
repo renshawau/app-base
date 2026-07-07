@@ -40,7 +40,7 @@ A derived site edits **its** files and leaves base internals alone — that's th
 
 | You own | Purpose |
 |---|---|
-| `apps/web/wrangler.jsonc` | Worker name, routes/domains, bindings |
+| `wrangler.jsonc` (repo root) | Worker name, routes/domains, bindings |
 | `apps/web/src/site.config.ts` | name, tenancy mode, branding, module list |
 | `apps/web/src/client/styles/theme.css` | design-token overrides |
 | `apps/web/src/modules.ts` + your own modules | what ships |

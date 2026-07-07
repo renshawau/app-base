@@ -7,6 +7,8 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     react(),
-    cloudflare(),
+    // Wrangler config lives at the repo root so the deploy button's
+    // provisioning step can detect it (ADR 005).
+    cloudflare({ configPath: "../../wrangler.jsonc" }),
   ],
 });

@@ -52,4 +52,4 @@ Auth is provider-based. `packages/auth` defines an `AuthProvider` interface (`au
 | `packages/auth/src/providers/cloudflare-access.ts` | Default provider (CF Access JWT) |
 | `apps/web/src/client/main.tsx` | SPA entry |
 | `apps/web/src/client/routes/__root.tsx` | TanStack Router root + route tree |
-| `apps/web/wrangler.jsonc` | Cloudflare Worker config |
+| `wrangler.jsonc` (repo root) | Cloudflare Worker config |
