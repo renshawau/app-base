@@ -13,25 +13,24 @@ export const adminPanel: AdminPanel = {
 
 // Two surfaces under one mount: the sections-composed marketing page at the
 // mount root, and standalone content pages ("pages" collection) at
-// <mount>/<slug>. Static sibling routes (e.g. /blog) outrank the dynamic
-// $slug, so mounting this module at "/" is safe.
+// <mount>/<slug>. Registered as flat siblings, not a nested branch — a
+// branch at path "/" with an index child at "/" never matches, and "/" is
+// exactly where a marketing site mounts this module. Static sibling routes
+// (e.g. /blog) outrank the dynamic $slug.
 export function registerRoute(parentRoute: AnyRoute) {
-  const branch = createRoute({
-    getParentRoute: () => parentRoute,
-    path: meta.mount.path,
-  });
+  const base = meta.mount.path.replace(/\/$/, "");
 
   const index = createRoute({
-    getParentRoute: () => branch,
-    path: "/",
+    getParentRoute: () => parentRoute,
+    path: meta.mount.path,
     component: lazyRouteComponent(() => import("./SitePage"), "SitePage"),
   });
 
   const page = createRoute({
-    getParentRoute: () => branch,
-    path: "$slug",
+    getParentRoute: () => parentRoute,
+    path: `${base}/$slug`,
     component: lazyRouteComponent(() => import("./StaticPage"), "StaticPage"),
   });
 
-  return branch.addChildren([index, page]);
+  return [index, page];
 }
