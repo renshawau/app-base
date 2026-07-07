@@ -1,11 +1,23 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { createRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { ShowcasePage } from "../templates/showcase";
 import { registerModuleRoutes } from "../modules";
+import { useTenant } from "../hooks/useTenant";
 import { moduleMeta } from "../../modules";
 
+// The document title is branding, so it comes from tenant config rather than
+// the hardcoded index.html value (which is only the pre-hydration fallback).
+function RootLayout() {
+  const tenant = useTenant();
+  useEffect(() => {
+    if (tenant) document.title = tenant.branding.name;
+  }, [tenant]);
+  return <Outlet />;
+}
+
 export const rootRoute = createRootRoute({
-  component: () => <Outlet />,
+  component: RootLayout,
 });
 
 // The base's demo landing page. It only mounts when no module claims "/" in
