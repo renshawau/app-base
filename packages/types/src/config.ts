@@ -24,6 +24,8 @@ export const brandingSchema = z.object({
       text: z.string().optional(),
       /** logo image URL rendered beside the statement */
       logo: z.string().optional(),
+      /** which side of the statement the logo sits on */
+      logoSide: z.enum(["left", "right"]).default("left"),
     })
     .optional(),
 });

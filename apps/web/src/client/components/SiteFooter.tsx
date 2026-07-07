@@ -37,16 +37,20 @@ export function SiteFooter() {
         {(footer.text || footer.logo) && (
           <div className="flex flex-wrap items-center gap-6">
             {footer.logo && (
+              // footer.logoSide picks which side of the statement it sits on
               <img
                 src={footer.logo}
                 alt={tenant.branding.name}
-                style={{ height: "var(--site-footer-logo-height, 4rem)" }}
+                style={{
+                  height: "var(--site-footer-logo-height, 4rem)",
+                  order: footer.logoSide === "right" ? 2 : 0,
+                }}
               />
             )}
             {footer.text && (
               <p
                 className="text-xs leading-relaxed max-w-3xl flex-1 min-w-64"
-                style={{ color: "var(--site-footer-fg, var(--color-kumo-subtle))" }}
+                style={{ color: "var(--site-footer-fg, var(--color-kumo-subtle))", order: 1 }}
               >
                 {footer.text}
               </p>
