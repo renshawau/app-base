@@ -1,0 +1,11 @@
+{
+  "name": "@app-base/auth",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@app-base/types": "workspace:*"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "web",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@cloudflare/kumo": "^2.6.0",
+    "@phosphor-icons/react": "^2.1.7",
+    "@tanstack/react-router": "^1.120.0",
+    "gray-matter": "^4.0.3",
+    "hono": "^4.7.11",
+    "marked": "^18.0.5",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@app-base/auth": "workspace:*",
+    "@app-base/types": "workspace:*",
+    "@cloudflare/vite-plugin": "^1.43.0",
+    "@cloudflare/vitest-pool-workers": "^0.18.0",
+    "@cloudflare/workers-types": "^4.20250620.0",
+    "@tailwindcss/vite": "^4.1.10",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
+    "@vitejs/plugin-react": "^4.5.2",
+    "tailwindcss": "^4.1.10",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^4.1.0",
+    "wrangler": "^4.107.0"
+  }
+}

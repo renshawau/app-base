@@ -1,0 +1,40 @@
+{
+  "name": "app-base-web",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2025-06-22",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Source maps uploaded for Workers Tail / error tracking
+  "upload_source_maps": true,
+
+  // Observability: enable Workers Analytics Engine tracing
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+
+  // Static assets — SPA fallback serves index.html for unknown paths
+  "assets": {
+    "directory": "./dist/client",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+
+  // The placeholder ids below are deliberate — never commit real resource ids.
+  // Local dev/preview use Wrangler's local emulation regardless of ids.
+  // For real deploys they are filled in one of two ways (see ADR 005):
+  //  - Deploy to Cloudflare button: resources are provisioned in the
+  //    deployer's account and these ids are rewritten automatically.
+  //  - Manual: `wrangler kv namespace create TENANTS` and
+  //    `wrangler d1 create app-base-web`, then set the ids locally.
+
+  // Per-hostname tenant overrides — only read when site.config.ts sets tenancy: "multi".
+  "kv_namespaces": [
+    { "binding": "TENANTS", "id": "local-dev-placeholder" }
+  ],
+
+  // Module-owned schema, applied by the migration runner (apps/web/src/worker/migrations.ts).
+  "d1_databases": [
+    { "binding": "DB", "database_name": "app-base-web", "database_id": "local-dev-placeholder" }
+  ]
+}

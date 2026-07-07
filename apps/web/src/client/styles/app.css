@@ -1,0 +1,9 @@
+/* Scan Kumo dist so Tailwind picks up its utility classes */
+@source "../../../node_modules/@cloudflare/kumo/dist/**/*.{js,jsx,ts,tsx}";
+
+/* Kumo tokens must come before Tailwind */
+@import "@cloudflare/kumo/styles/tailwind";
+@import "tailwindcss";
+
+/* Site theme overrides — see theme.css for why import order doesn't matter here */
+@import "./theme.css";

@@ -1,0 +1,47 @@
+/*
+ * Site theme overrides — the ONLY place a site should touch to rebrand.
+ * Never edit component code or Kumo's own token files to restyle; if a
+ * component can't be restyled through tokens, that's a gap in the base —
+ * request a variant/slot upstream instead of forking it (see
+ * docs/plans/02-theming.md).
+ *
+ * These are plain, unlayered CSS custom property declarations. Kumo's own
+ * tokens live inside a Tailwind `@theme` block, which CSS cascade layers
+ * place in the "theme" layer — and unlayered rules always win over layered
+ * ones regardless of source order or specificity. So anything set here
+ * overrides Kumo's default no matter where this import sits relative to
+ * Kumo's.
+ *
+ * Catalogue below is the subset of Kumo's ~170 CSS custom properties
+ * (--color-kumo-... and --text-color-kumo-..., full list:
+ * node_modules/@cloudflare/kumo/dist/styles/theme-kumo.css) most relevant to
+ * a site-level rebrand, plus Tailwind's own (non-Kumo-namespaced) radius and
+ * font tokens. Uncomment and set a value to override it; anything left
+ * commented inherits Kumo's default.
+ */
+
+:root {
+  /* --- Brand --- */
+  /* --color-kumo-brand: oklch(0.5772 0.2324 260); */
+  /* --color-kumo-brand-hover: oklch(48.8% 0.243 264.376); */
+  /* --text-color-kumo-brand: #f6821f; */
+
+  /* --- Surfaces --- */
+  /* --color-kumo-canvas: oklch(98.75% 0 0); */
+  /* --color-kumo-base: #fff; */
+  /* --color-kumo-recessed: oklch(96% 0 0); */
+  /* --color-kumo-line: oklch(14.5% 0 0 / 0.1); */
+  /* --color-kumo-hairline: oklch(93.5% 0 0); */
+
+  /* --- Shape & type (Tailwind's own tokens, not Kumo-namespaced) --- */
+  /* --radius-lg: .5rem; */
+  /* --font-sans: ui-sans-serif, system-ui, sans-serif; */
+}
+
+/* Dark-mode counterparts — only needed for values that differ from :root's.
+   Kumo scopes dark mode via [data-mode="dark"] on <html> (see useDarkMode.ts),
+   which also flips the CSS color-scheme Kumo's light-dark() tokens read. */
+[data-mode="dark"] {
+  /* --color-kumo-canvas: oklch(10% 0 0); */
+  /* --color-kumo-brand: color-mix(in oklch, oklch(0.5772 0.2324 260), black 10%); */
+}
