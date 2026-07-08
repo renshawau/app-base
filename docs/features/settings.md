@@ -34,6 +34,10 @@ The resolved `Tenant` — site defaults merged with any tenant override — is w
 
 `/api/tenant` exposes the client-safe subset: name, branding, and enabled modules. Nothing else from the tenant record reaches the SPA, and that's deliberate. `useTenant()` (`apps/web/src/client/hooks/useTenant.ts`) fetches it — `BlogPage.tsx` shows the consumption pattern.
 
+## Maintenance / coming-soon mode
+
+`maintenance: { enabled, message?, logo? }` in `site.config.ts` (or per tenant in KV — flip a live tenant into maintenance without a redeploy). While enabled, unauthenticated visitors get a brand splash (colors + logo, themed via the `--site-splash-*` variables), and the worker 503s public module APIs so content is genuinely unavailable, not just hidden. Authenticated users — anyone the active auth provider recognizes — see the full site. Note for local dev: the dev auth provider authenticates everyone, so you'll always see the real site; the splash only shows where real auth runs.
+
 ## Adding a tenant
 
 See the [maintenance guide](../guides/maintenance.md#tenant-management).

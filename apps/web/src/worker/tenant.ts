@@ -34,6 +34,7 @@ function mergeTenant(host: string, record: TenantRecord | null): Tenant {
     name: record?.name ?? siteConfig.name,
     branding: mergeBranding(siteConfig.branding, record?.branding),
     modules: { ...siteConfig.modules, ...record?.modules },
+    maintenance: { ...siteConfig.maintenance, ...record?.maintenance },
   };
 }
 

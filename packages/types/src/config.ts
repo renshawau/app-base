@@ -31,6 +31,20 @@ export const brandingSchema = z.object({
 });
 export type Branding = z.infer<typeof brandingSchema>;
 
+/**
+ * Maintenance / coming-soon mode: visitors get a brand splash (colors + logo)
+ * and the public module APIs return 503; authenticated users see the real
+ * site. Toggle per tenant at runtime (KV) or site-wide at build time.
+ */
+export const maintenanceSchema = z.object({
+  enabled: z.boolean().default(false),
+  /** short line under the logo, e.g. "Coming soon" */
+  message: z.string().optional(),
+  /** splash logo URL; falls back to branding.logo, then the name wordmark */
+  logo: z.string().optional(),
+});
+export type Maintenance = z.infer<typeof maintenanceSchema>;
+
 /** Build-time config a site owns in its own repo. The base owns this schema; sites own the values. */
 export const siteConfigSchema = z.object({
   name: z.string(),
@@ -38,8 +52,11 @@ export const siteConfigSchema = z.object({
   tenancy: z.enum(["single", "multi"]).default("single"),
   branding: brandingSchema,
   modules: z.record(z.string(), moduleConfigSchema).default({}),
+  maintenance: maintenanceSchema.default({ enabled: false }),
 });
 export type SiteConfig = z.infer<typeof siteConfigSchema>;
+/** What a site writes in site.config.ts — schema defaults still optional. */
+export type SiteConfigInput = z.input<typeof siteConfigSchema>;
 
 /**
  * Runtime, per-tenant record stored in the TENANTS KV namespace, keyed by
@@ -52,6 +69,8 @@ export const tenantConfigSchema = z.object({
   name: z.string().optional(),
   branding: brandingSchema.partial().optional(),
   modules: z.record(z.string(), moduleConfigSchema).optional(),
+  /** runtime maintenance toggle — flip a tenant into coming-soon without a redeploy */
+  maintenance: maintenanceSchema.partial().optional(),
 });
 export type TenantRecord = z.infer<typeof tenantConfigSchema>;
 
@@ -62,4 +81,5 @@ export type Tenant = {
   name: string;
   branding: Branding;
   modules: Record<string, { enabled: boolean }>;
+  maintenance: Maintenance;
 };

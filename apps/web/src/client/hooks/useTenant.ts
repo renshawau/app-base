@@ -9,6 +9,7 @@ type TenantInfo = {
     footer?: { links: { label: string; href: string }[]; text?: string; logo?: string; logoSide?: "left" | "right" };
   };
   modules: Record<string, { enabled: boolean }>;
+  maintenance: { enabled: boolean; message?: string; logo?: string };
 };
 
 // Fetches the client-safe tenant subset exposed at /api/tenant (see

@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import type { Tenant } from "@app-base/types";
 import { authMiddleware } from "./middleware/auth";
+import { authProvider } from "./auth-provider";
 import { adminMiddleware } from "./middleware/admin";
 import { workerModules } from "./modules";
 import { resolveTenant } from "./tenant";
@@ -32,7 +33,12 @@ app.get("/api/health", (c) => c.json({ ok: true, tenant: c.get("tenant") }));
 // include anything from the tenant record that shouldn't reach the SPA.
 app.get("/api/tenant", (c) => {
   const tenant = c.get("tenant");
-  return c.json({ name: tenant.name, branding: tenant.branding, modules: tenant.modules });
+  return c.json({
+    name: tenant.name,
+    branding: tenant.branding,
+    modules: tenant.modules,
+    maintenance: tenant.maintenance,
+  });
 });
 
 // Protected routes — auth then role check; the admin plane is /api/admin/*
@@ -58,8 +64,16 @@ app.use("/api/*", async (c, next) => {
 for (const mod of workerModules) {
   const gated = new Hono<{ Bindings: Bindings; Variables: Variables }>();
   gated.use("*", async (c, next) => {
-    const enabled = c.get("tenant").modules[mod.meta.name]?.enabled ?? mod.meta.defaultEnabled;
+    const tenant = c.get("tenant");
+    const enabled = tenant.modules[mod.meta.name]?.enabled ?? mod.meta.defaultEnabled;
     if (!enabled) return c.notFound();
+    // Maintenance/coming-soon: the splash needs no module data, so public
+    // APIs 503 for everyone except authenticated users — the content is
+    // genuinely unavailable pre-launch, not just visually hidden.
+    if (tenant.maintenance.enabled) {
+      const user = await authProvider.authenticate(c.req.raw, c.env);
+      if (!user) return c.json({ error: "Down for maintenance" }, 503);
+    }
     await next();
   });
   gated.route("/", mod.routes);

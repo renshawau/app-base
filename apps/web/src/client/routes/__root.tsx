@@ -1,6 +1,7 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { createRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { MaintenanceScreen } from "../components/MaintenanceScreen";
 import { ShowcasePage } from "../templates/showcase";
 import { registerModuleRoutes } from "../modules";
 import { useDarkMode } from "../hooks/useDarkMode";
@@ -12,12 +13,42 @@ import { moduleMeta } from "../../modules";
 // Subscribing to useDarkMode here keeps <html data-mode> applied on every
 // surface — including pages that render no mode toggle — so the platform
 // never flips between light and dark across navigations.
+//
+// Maintenance mode: when the tenant has it enabled, unauthenticated visitors
+// get the brand splash instead of the app; /api/admin/me decides who's
+// authenticated. Nothing renders until the tenant resolves, so no content
+// flashes before the decision. The worker also 503s public module APIs while
+// maintenance is on — the splash is presentation, not the security boundary.
 function RootLayout() {
   const tenant = useTenant();
   useDarkMode();
+  const maintenance = tenant?.maintenance.enabled ?? false;
+  const [authed, setAuthed] = useState<boolean | null>(null);
+
   useEffect(() => {
     if (tenant) document.title = tenant.branding.name;
   }, [tenant]);
+
+  useEffect(() => {
+    if (!maintenance) return;
+    let cancelled = false;
+    fetch("/api/admin/me")
+      .then((res) => {
+        if (!cancelled) setAuthed(res.ok);
+      })
+      .catch(() => {
+        if (!cancelled) setAuthed(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [maintenance]);
+
+  if (!tenant) return null;
+  if (maintenance) {
+    if (authed === null) return null;
+    if (!authed) return <MaintenanceScreen />;
+  }
   return <Outlet />;
 }
 

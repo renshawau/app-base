@@ -26,7 +26,7 @@ The base ships `theme.css` with every override commented out, so a fresh site in
 
 If you need something beyond the curated list, the full set of ~170 Kumo tokens is in `node_modules/@cloudflare/kumo/dist/styles/theme-kumo.css` — the same override mechanism applies to any of them.
 
-The public-site chrome (`SiteHeader`, `SiteFooter`, and the pages module's hero band) adds its own site-level custom properties, all optional with sensible Kumo-token fallbacks: `--site-header-bg`, `--site-nav-bg`, `--site-nav-fg`, `--site-nav-accent`, `--site-hero-bg`, `--site-hero-fg`, `--site-hero-accent`, `--site-hero-cta-bg`, `--site-hero-cta-fg`, `--site-hero-overlay` (tint over rotating hero background images), `--site-footer-bg`, `--site-footer-link`, and `--site-footer-fg`. Footer links and text are data, not CSS — they come from `branding.footer` in `site.config.ts`.
+The public-site chrome (`SiteHeader`, `SiteFooter`, and the pages module's hero band) adds its own site-level custom properties, all optional with sensible Kumo-token fallbacks: `--site-header-bg`, `--site-nav-bg`, `--site-nav-fg`, `--site-nav-accent`, `--site-hero-bg`, `--site-hero-fg`, `--site-hero-accent`, `--site-hero-cta-bg`, `--site-hero-cta-fg`, `--site-hero-overlay` (tint over rotating hero background images), `--site-splash-bg`, `--site-splash-fg`, `--site-splash-logo-height` (the maintenance/coming-soon screen), `--site-footer-bg`, `--site-footer-link`, and `--site-footer-fg`. Footer links and text are data, not CSS — they come from `branding.footer` in `site.config.ts`.
 
 ## Dark mode
 
