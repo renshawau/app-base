@@ -10,8 +10,12 @@ type ClientModuleMeta = ModuleMeta & { mount: ClientMount };
 // marketing at "/" with the dashboard at "/dash", or the dashboard pinned to
 // its own hostname ({ path: "/", host: "dash.example.com" }). Exactly one
 // surface may own "/" per host. See ADR 007.
-export const moduleMeta: Record<"blog" | "dashboard" | "portfolio" | "pages", ClientModuleMeta> = {
+export const moduleMeta: Record<"blog" | "bookings" | "dashboard" | "portfolio" | "pages", ClientModuleMeta> = {
   blog: { name: "blog", defaultEnabled: true, mount: { path: "/blog" } },
+  // Microsoft Bookings integration (docs/features/bookings.md) — the page
+  // lives at /book; other modules integrate by linking there or rendering
+  // the core BookingFlow component.
+  bookings: { name: "bookings", defaultEnabled: true, mount: { path: "/book" } },
   // The backoffice shell (ADR 007) — client-only; its API surface is other
   // modules' adminRoutes plus the core /api/admin/* routes.
   dashboard: { name: "dashboard", defaultEnabled: true, mount: { path: "/dashboard" } },

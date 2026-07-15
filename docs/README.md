@@ -21,6 +21,7 @@ Everything is indexed below. If you're new, read the [architecture overview](./a
 | [Data & migrations](./features/data.md) | D1, module-owned schema, the migration runner |
 | [Theming](./features/theming.md) | Rebranding via tokens, never components |
 | [Admin & dashboard](./features/admin.md) | The backoffice, module admin panels, surface mounts |
+| [Bookings](./features/bookings.md) | Microsoft Bookings integration: branded in-site booking via Graph API, iframe embed fallback |
 | [Content engine](./features/content.md) | File-first content: site-owned tree, frontmatter-controlled, read-only admin (ADR 008) |
 | [Installation guide](./guides/installation.md) | First-time setup |
 | [Contributing guide](./guides/contributing.md) | Development workflow and standards |

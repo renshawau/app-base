@@ -1,4 +1,5 @@
 import { registerRoute as registerBlogRoute } from "./modules/blog";
+import { registerRoute as registerBookingsRoute } from "./modules/bookings";
 import { registerRoute as registerDashboardRoute } from "./modules/dashboard";
 import { registerRoute as registerPortfolioRoute } from "./modules/portfolio";
 import { registerRoute as registerPagesRoute } from "./modules/pages";
@@ -15,6 +16,7 @@ type RegisterFn = (parent: AnyRoute) => AnyRoute | AnyRoute[];
 
 const clientModules: { meta: (typeof moduleMeta)[keyof typeof moduleMeta]; register: RegisterFn }[] = [
   { meta: moduleMeta.blog, register: registerBlogRoute },
+  { meta: moduleMeta.bookings, register: registerBookingsRoute },
   { meta: moduleMeta.dashboard, register: registerDashboardRoute },
   { meta: moduleMeta.portfolio, register: registerPortfolioRoute },
   { meta: moduleMeta.pages, register: registerPagesRoute },

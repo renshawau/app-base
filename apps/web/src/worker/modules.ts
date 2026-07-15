@@ -3,6 +3,7 @@ import type { ModuleMeta, ModuleMigration } from "@app-base/types";
 import type { AppBindings } from "./bindings";
 import type { ContentCollection } from "./content/engine";
 import * as blog from "./modules/blog";
+import * as bookings from "./modules/bookings";
 import * as portfolio from "./modules/portfolio";
 import * as pages from "./modules/pages";
 
@@ -19,4 +20,4 @@ export type WorkerModule = {
 
 // Worker-side module registry. Each entry's `routes` is mounted at
 // /api/<meta.name>, gated by the tenant's module config (see app.ts).
-export const workerModules: WorkerModule[] = [blog, portfolio, pages];
+export const workerModules: WorkerModule[] = [blog, bookings, portfolio, pages];

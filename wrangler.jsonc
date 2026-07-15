@@ -42,5 +42,18 @@
   // Module-owned schema, applied by the migration runner (apps/web/src/worker/migrations.ts).
   "d1_databases": [
     { "binding": "DB", "database_name": "app-base-web", "database_id": "local-dev-placeholder" }
-  ]
+  ],
+
+  // Bookings module config (docs/features/bookings.md). Empty = the module
+  // shows its contact-page fallback. Set BOOKINGS_EMBED_URL alone for iframe
+  // mode, or the MS_*/BOOKINGS_BUSINESS_ID set for the full Graph API mode —
+  // plus `wrangler secret put MS_CLIENT_SECRET` (never a var, never in git).
+  // Local dev: override in .dev.vars at the repo root, beside this file (gitignored).
+  "vars": {
+    "BOOKINGS_EMBED_URL": "",
+    "MS_TENANT_ID": "",
+    "MS_CLIENT_ID": "",
+    "BOOKINGS_BUSINESS_ID": "",
+    "BOOKINGS_SERVICE_ID": ""
+  }
 }
