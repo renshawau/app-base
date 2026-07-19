@@ -42,6 +42,12 @@ export const maintenanceSchema = z.object({
   message: z.string().optional(),
   /** splash logo URL; falls back to branding.logo, then the name wordmark */
   logo: z.string().optional(),
+  /**
+   * optional CTA on the splash. Use an external URL (e.g. the Microsoft
+   * Bookings share link) — internal paths are still behind the maintenance
+   * gate, so a visitor clicking one just sees the splash again.
+   */
+  link: z.object({ label: z.string(), href: z.string() }).optional(),
 });
 export type Maintenance = z.infer<typeof maintenanceSchema>;
 

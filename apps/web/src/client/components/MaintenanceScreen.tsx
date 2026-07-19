@@ -40,6 +40,20 @@ export function MaintenanceScreen() {
           {tenant.maintenance.message}
         </p>
       )}
+      {tenant?.maintenance.link?.href && (
+        // External URLs only — internal paths are behind the maintenance gate
+        // (see the schema comment). Themed via --site-splash-cta-*.
+        <a
+          href={tenant.maintenance.link.href}
+          className="rounded-md px-5 py-2.5 text-sm font-medium border border-current"
+          style={{
+            background: "var(--site-splash-cta-bg, transparent)",
+            color: "var(--site-splash-cta-fg, inherit)",
+          }}
+        >
+          {tenant.maintenance.link.label}
+        </a>
+      )}
     </div>
   );
 }
